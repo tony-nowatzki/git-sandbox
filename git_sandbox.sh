@@ -292,6 +292,7 @@ echo "*.bin" > solo/.gitignore
 showFiles solo .gitignore
 
 cecho "# You'll generally want to commit the .gitignore file to share it with everyone."
+git add ".gitignore"
 git commit -am "committing gitignore"
 
 runCmd solo git status 
