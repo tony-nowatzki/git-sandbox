@@ -67,7 +67,7 @@ runCmd() {
   cd $dir
   shift
 #  echo "($dir) >>>" $@
-  asdf="\"$@\""
+  asdf="$@"
   tput setaf 3
 
   if [ "$skip_through" -le "$lesson_count" ]; then
@@ -141,7 +141,7 @@ cecho "# Lets Begin!"
 
 pause
 
-cecho "# All git commands that we run will be dispalayed on the screen, and run by You!"
+cecho "# All git commands that we run will be displayed on the screen, and run by You!"
 cecho "# Try this one out, the directory is in ():"
 runCmd . ls -al
 cecho "# Look at all those cool files you have!"
@@ -159,7 +159,7 @@ cecho "# Lets start off with a simple use case."
 cecho "# One of git's great features is that it does not require a central repository."
 cecho "# Any directory can become a git directory, and we can use git to do"
 cecho "# local revision control."
-cecho "# I've create some sample files in the \"solo\" diretory:"
+cecho "# I've create some sample files in the \"solo\" directory:"
 
 mkdir -p solo
 echo "Some random text " > solo/file1.txt
@@ -181,7 +181,7 @@ runCmd solo git add file1.txt file2.txt
 
 cecho "# Now these files are tracked."
 cecho "Lets create our first commit:"
-runCmd solo git commit -m "Initial Commit"
+runCmd solo git commit -m "\"Initial Commit\""
 
 cecho "# Our files are now in the repository. Phew, doesn't that feel better?"
 
@@ -197,7 +197,7 @@ cecho "# Files in git can be in one of four stages:"
 cecho "# 1. Untracked: The file is not kept track of by git"
 cecho "# 2. Modified, Unstaged: The file is modified since the last commit"
 cecho "# 3. Modified, Staged: The modified file is staged for commit"
-cecho "# 4. Committed: The file is committed/unchaed since last commit"
+cecho "# 4. Committed: The file is committed/uncached since last commit"
 cecho "# Stage 3 is a unique feature to git.  The staged state allows the developer"
 cecho "# To pick and choose files and changes that should comprise a single commit"
 pause
@@ -221,20 +221,20 @@ pause
 
 
 cecho "# Now we're going to demonstrate the different stages by making changes to the files."
-cecho "# I've already done this, Should we check what changes i've made?"
+cecho "# I've already done this, Should we check what changes I've made?"
 echo "...another random line" >> solo/file1.txt
 echo "...another random line" >> solo/file2.txt
 runCmd solo git diff --color
 
-cecho "# This command shows the difference between files in the modified/unstanged state,"
+cecho "# This command shows the difference between files in the modified/Unstaged state,"
 cecho "# versus files in the modified/staged state."
-cecho "# As you can see, i've added the text \"...another random line\" to both files"
+cecho "# As you can see, I've added the text \"...another random line\" to both files"
 pause
 
 cecho "# Lets check what state all of the files are in right now. We can do that by running:"
 runCmd solo git status
 
-cecho "# Right now, we have one untracked file, and two modififed files"
+cecho "# Right now, we have one untracked file, and two modified files"
 pause
 
 cecho "# Now lets stage the changes that we made to file1.txt"
@@ -247,7 +247,7 @@ runCmd solo git diff --cached --color
 
 
 cecho "# And now lets commit them"
-runCmd solo git commit -m "Committing Changes to file1"
+runCmd solo git commit -m "\"Committing Changes to file1\""
 
 runCmd solo git status
 cecho "# We can stage the changes to file2.txt"
@@ -260,7 +260,7 @@ runCmd solo git status
 
 pause
 
-cecho "# If we don't want to go through the trouble of staging and comitting files,"
+cecho "# If we don't want to go through the trouble of staging and committing files,"
 cecho "# We can use use the \"-a\" flag to stage and commit all modified files"
 
 cecho ""
@@ -274,7 +274,7 @@ cecho "# Committed <----------"
 cecho "" 
 
 cecho "# Lets try this out now:"
-runCmd solo git commit -am "Committing Changes to file2"
+runCmd solo git commit -am "\"Committing Changes to file2\""
 runCmd solo git status
 cecho "# Now we have no changes left to commit"
 
@@ -283,7 +283,7 @@ pause
 
 cecho "# Annoyingly, we still have that binary file showing up in our status list."
 cecho "# There's an exceedingly simple way to exclude certain types of files from"
-cecho "# showing up in git's status messages, and also from accidently including them"
+cecho "# showing up in git's status messages, and also from accidentally including them"
 cecho "# in the repository.  It's called the \".gitignore\" list."
 cecho "# It's basically a list of files you don't want git to pay attention to."
 cecho "# I've added a .gitignore for you:"
@@ -292,12 +292,12 @@ echo "*.bin" > solo/.gitignore
 showFiles solo .gitignore
 
 cecho "# You'll generally want to commit the .gitignore file to share it with everyone."
-git add ".gitignore"
-git commit -am "committing gitignore"
+runCmd solo git add ".gitignore"
+runCmd solo git commit -am "\"committing gitignore\""
 
 runCmd solo git status 
 
-cecho "# all gone!"
+cecho "# all gone! The .gitignore list helps prevent you from adding inappropriate files."
 
 lesson "Viewing History, and Going back in Time"
 
@@ -327,7 +327,7 @@ pause
 cecho "# Lets say we don't like the final commit: we don't want the changes"
 cecho "# that we made to file 2."
 cecho "# There are various ways to \"undo\" changes in git, re-write history, and delete"
-cecho "# all traces of an embarassing commit. Lets not get ahead of ourselves"
+cecho "# all traces of an embarrassing commit. Lets not get ahead of ourselves"
 cecho "# The simplest way to undo changes is to apply the inverse patch, known"
 cecho "# in git as a \"revert\""
 cecho "# Lets revert back to our very first commit, where each file only had one line"
@@ -343,7 +343,7 @@ cecho "# Now lets check what's in our files"
 showFiles solo
 
 cecho "# Cool huh? Since we specified no-commit, lets make sure we commit this change:"
-runCmd solo git commit -am "Reverted to $third_last_commit"
+runCmd solo git commit -am "\"Reverted to $third_last_commit\""
 
 cecho "# and our log says:"
 runCmd solo git log
@@ -368,11 +368,11 @@ cecho "# While you weren't looking, I've committed different changes to both bra
 ## behind the scenes adding of commits
 cd solo
 echo "a minor change" >> file2.txt
-git commit -am "experimental change" &> /dev/null
+git commit -am "\"experimental change\"" &> /dev/null
 
 git checkout master &> /dev/null
 echo "a minor change" >> file1.txt
-git commit -am "change to master" &> /dev/null
+git commit -am "\"change to master\"" &> /dev/null
 
 git checkout experiment &> /dev/null
 cd ..
@@ -389,21 +389,21 @@ pause
 cecho "# Lets say I want to continue to make changes on the experimental branch, but I also"
 cecho "# want to keep up-to-date with master.  I can run the following:"
 
-runCmd solo git merge master -m "merging master changes"
+runCmd solo git merge master -m "\"merging master changes\""
 runCmd solo git log  --graph --oneline --decorate --all --color
 
 cecho "# Cool huh?  The experiment branch was automatically merged in with master,"
-cecho "# because there was no conficts.  Lets add some more commits, and try again."
+cecho "# because there was no conflicts.  Lets add some more commits, and try again."
 cecho "# (again, I'll do this behind the scenes)"
 
 ## behind the scenes adding of commits
 cd solo
 echo "a minor change 2" >> file2.txt
-git commit -am "experimental change 2" &> /dev/null
+git commit -am "\"experimental change 2\"" &> /dev/null
 
 git checkout master &> /dev/null
 echo "a minor change 2" >> file1.txt
-git commit -am "change to master 2" &> /dev/null
+git commit -am "\"change to master 2\"" &> /dev/null
 
 git checkout experiment &> /dev/null
 cd ..
@@ -411,7 +411,7 @@ cd ..
 
 runCmd solo git log  --graph --oneline --decorate --all --color
 
-cecho "# OK.  This time the graph is a little harder to understand. But it's ascii after"
+cecho "# OK.  This time the graph is a little harder to understand. But it's ASCII after"
 cecho "# all.  What you should see is that each branch, master and experimental, has one"
 cecho "# additional commit."
 pause
@@ -419,14 +419,14 @@ pause
 cecho "# Lets prepare to merge the experimental changes back into master."
 cecho "# First, lets merge in the master changes to the experimental branch."
 
-runCmd solo git merge master -m "merging master changes 2"
+runCmd solo git merge master -m "\"merging master changes 2\""
 runCmd solo git log  --graph --oneline --decorate --all --color
 
 cecho "# Once we are convinced there are no bugs, lets merge the experiment branch"
 cecho "# back into the master branch"
 
 runCmd solo git checkout master
-runCmd solo git merge experiment -m "merging experiment to master"
+runCmd solo git merge experiment -m "\"merging experiment to master\""
 runCmd solo git log  --graph --oneline --decorate --all --color
 
 cecho "# YAY! All of our branches are matched up, and we are all happy."
@@ -445,15 +445,15 @@ cecho "# presto, it's gone!"
 lesson "Branching and Conflict Resolution"
 
 cecho "# The previous examples shows what happens when changes on separate branches"
-cecho "# did not iterfere.  There were no conflicts.  Though branches should generally"
-cecho "# be about separate ideas, there's no gaurantee that they won't both change"
-cecho "# the same part of the same files.  Git does it's best to automatically merege"
+cecho "# did not interfere.  There were no conflicts.  Though branches should generally"
+cecho "# be about separate ideas, there's no guarantee that they won't both change"
+cecho "# the same part of the same files.  Git does it's best to automatically merge"
 cecho "# changes, but of course it is not always successful."
 pause
 
 cecho "# We will now explore a similar scenario as the example in the previous lesson, but"
 cecho "# this time there will be a conflict!"
-cecho "# Again, i've done some commits behind the scenes, as you can see:"
+cecho "# Again, I've done some commits behind the scenes, as you can see:"
 
 
 ## behind the scenes adding of commits
@@ -461,11 +461,11 @@ cd solo
 git branch experiment
 
 echo "a conflicting change in master branch" >> file1.txt
-git commit -am "change to file1 in master" &> /dev/null
+git commit -am "\"change to file1 in master\"" &> /dev/null
 
 git checkout experiment &> /dev/null
 echo "a conflicting change in experiment branch" >> file1.txt
-git commit -am "change to file1 in experiment" &> /dev/null
+git commit -am "\"change to file1 in experiment\"" &> /dev/null
 
 git checkout master &> /dev/null
 cd ..
@@ -476,7 +476,7 @@ runCmd solo git log  --graph --oneline --decorate --all --color
 cecho "# so far so good, right?"
 cecho "# lets try to merge experiment back to master."
 
-runCmd solo git merge experiment -m "nothing can go wrong, right?"
+runCmd solo git merge experiment -m "\"nothing can go wrong, right?\""
 
 cecho "# oh no. you can't be serious?  What is our status:"
 
@@ -515,14 +515,14 @@ showFiles solo
 
 cecho "# lets check the status again:"
 runCmd solo git status
-cecho "# ... even after fixing the file, the status is still unmerged."
+cecho "# ... even after fixing the file, the status is still un-merged."
 cecho "# We need to \"add\" the file to mark it as good."
 
 runCmd solo git add file1.txt
 runCmd solo git status
 cecho "# Now our merge is ready for commit!."
 
-runCmd solo git commit -am "Merging Conflict"
+runCmd solo git commit -am "\"Merging Conflict\""
 runCmd solo git log  --graph --oneline --decorate --all --color
 cecho "# Now our branches are merged safe and sound."
 pause
@@ -534,7 +534,7 @@ cecho  "Git Commands:"
 defgit "git init <dir>          " "creates an empty repository"
 defgit "         --bare         " "makes a repo with no working directory"
 defgit "git add  <file>         " "Stages (and possibly begins tracking) <file>."
-defgit "git reset <file>        " "Unstages <file>"
+defgit "git reset <file>        " "Un-stages <file>"
 defgit "git commit -m \"msg\"   " "Commits staged files to repo."
 defgit "git log --color         " "Shows the log of commits."
 defgit "        --graph --oneline --decorate --all --color  " "Show Commit tree."
@@ -557,7 +557,8 @@ ipoint "Files can be in four basic states:
         Untracked, Unstaged, Staged, Committed."
 ipoint "If possible, commit all files before performing any git action.
         If a commit of a file exists, it can be recovered!"
-ipoint "Do not put temporary/generated/large files in the repository."
+ipoint "Do not put temporary/generated/large files in the repository.
+        Placing some file-patterns in the .gitignore list can help."
 ipoint "In project branches, try to stay up to date with the master.
         This will help prevent conflicts as branches evolve."
 
@@ -579,9 +580,9 @@ cecho "# To get your sharing certification, keep going!"
 lesson Sharing with a Centralized Repository
 cecho "# So far we been working in a local repository only,"
 cecho "# but sharing is probably the most important part of version control."
-cecho "# Git supports MANY different forms of version control workflows, raninging"
+cecho "# Git supports MANY different forms of version control workflows, ranging"
 cecho "# from no-sharing, peer-to-peer sharing, and clustered hierarchies, etc..."
-cecho "# This tutorial will present ONE possibility: a centeralized group repository"
+cecho "# This tutorial will present ONE possibility: a centralized group repository"
 pause
 
 cecho "# One of the nice things about git is that the branch abstraction is used for"
@@ -637,7 +638,7 @@ echo "ALICE'S CHANGE 1" >> alice/file2.txt
 showFiles alice
 
 cecho "# Alice commits her change to her local repo like"
-runCmd alice git commit -am "alice's first commit"
+runCmd alice git commit -am "\"alice's first commit\""
 
 cecho "# Remember, the \"a\" flag automatically stages all modified files."
 pause
@@ -648,7 +649,7 @@ cecho "# now Alice makes another change:"
 echo "ALICE'S CHANGE 2" >> alice/file2.txt
 showFiles alice
 cecho "# and she makes sure to commit again."
-runCmd alice git commit -am "alice's second commit"
+runCmd alice git commit -am "\"alice's second commit\""
 
 pause
 
@@ -678,18 +679,18 @@ cecho "# One more potentially useful feature is to see what are the incoming"
 cecho "# changes to the repository from others."
 cecho "# Git allows us to get other's changes without applying them with the"
 cecho "# working directory with the \"fetch\" command."
-cecho "# Consder a scenario where bob what's to see alice's incoming changes"
+cecho "# Consider a scenario where bob what's to see alice's incoming changes"
 cecho "# (alice has made some changes in the background). Bob runs this:"
 
 cd alice;
 echo "Alice's New File" > file2.txt
-git commit -am "alice replaced file 2" &> /dev/null
+git commit -am "\"alice replaced file 2\"" &> /dev/null
 git push &> /dev/null
 cd ..
 
 runCmd bob git fetch
 cecho "# after which he has the changes, but they are not merged with his current"
-cecho "# workign directory.  He can see the new changes in the log:"
+cecho "# working directory.  He can see the new changes in the log:"
 
 runCmd bob git log  --graph --oneline --decorate --all --color
 
@@ -706,7 +707,7 @@ runCmd bob git pull
 #cecho "# And new she makes a change."
 #echo "ALICE'S COOL NEW FEATURE!!!!" >> alice/file1.txt
 #showFiles alice
-#cecho "# and she commit's it."
+#cecho "# and she commits it."
 
 
 
@@ -741,7 +742,7 @@ cecho "# To get your advanced certification, keep going!"
 lesson Advanced Topic A: Going Backwards and Changing History
 
 cecho "# Probably the most useful thing to undo is your current working edits."
-cecho "# Lets say that bob accidently overwrote his file1.txt"
+cecho "# Lets say that bob accidentally overwrote his file1.txt"
 
 echo " GARBAGE " > bob/file1.txt
 
@@ -750,7 +751,7 @@ showFiles bob
 pause
 
 cecho "# Bob can get everything back by running the \"checkout\" command, but with"
-cecho "# different arguements than we are used to"
+cecho "# different arguments than we are used to"
 
 runCmd bob git checkout file1.txt
 
@@ -810,10 +811,10 @@ cecho "# lets first make two new commits, and try reverting by resetting the bra
 cecho "# I'll change the files, and you commit them."
 
 echo "BOB's NEW CHANGE 1" >> bob/file1.txt
-runCmd bob git commit -am "bob's new change 1"
+runCmd bob git commit -am "\"bob's new change 1\""
 
 echo "BOB's NEW CHANGE 2" >> bob/file1.txt
-runCmd bob git commit -am "bob's new change 2"
+runCmd bob git commit -am "\"bob's new change 2\""
 
 cecho "Lets check the current state of our repository:"
 runCmd bob git log  --graph --oneline --decorate --all --color
@@ -831,8 +832,8 @@ runCmd bob git pull
 
 runCmd bob git log  --graph --oneline --decorate --all --color
 
-cecho "Ahhh, it all came back again! But wait, not all of it came back. The commits"
-cecho "that weren\'t public yet are really gone!"
+cecho "Aha, it all came back again! But wait, not all of it came back. The commits"
+cecho "that weren't public yet are really gone!"
 cecho "The lesson: you can use reset --hard to get rid of commits that aren't public yet."
 
 pause
@@ -851,13 +852,13 @@ cecho ""
 cecho "# first lets make three commits"
 
 echo "BOB's NEW CHANGE 1" >> bob/file1.txt
-runCmd bob git commit -am "bob's new change 1"
+runCmd bob git commit -am "\"bob's new change 1\""
 
 echo "BOB's NEW CHANGE 2" >> bob/file1.txt
-runCmd bob git commit -am "bob's new change 2"
+runCmd bob git commit -am "\"bob's new change 2\""
 
 echo "BOB's NEW CHANGE 3" >> bob/file1.txt
-runCmd bob git commit -am "bob's new change 3"
+runCmd bob git commit -am "\"bob's new change 3\""
 
 cecho "# and here's what the new files look like:"
 showFiles bob
@@ -878,7 +879,7 @@ runCmd bob git reset --soft $fourth_last_commit
 runCmd bob git status
 cecho "# notice how bob now has changes to file1.txt to commit."
 
-runCmd bob git commit -am "bob's clean commit"
+runCmd bob git commit -am "\"bob's clean commit\""
 runCmd bob git log  --graph --oneline --decorate --all --color
 
 cecho "#As you can see above, three of bobs commits are now one."
@@ -891,7 +892,7 @@ cecho "# which gives a quick way to change just the *last* commit."
 cecho "# Here is an example where we just change the commit message:"
 cecho "# (of course, you are allowed to add changes, etc)"
 
-runCmd bob git commit --amend -m "a new message for bob's commit"
+runCmd bob git commit --amend -m "\"a new message for bob's commit\""
 runCmd bob git log  --graph --oneline --decorate --all --color
 
 cecho "# Again, don't do this to public commits!"
@@ -909,11 +910,11 @@ lesson Advanced Topic B: Rebase
 cecho "# Git \"rebase\" is a powerful command in git, that enables developers"
 cecho "# to re-arrange history.  Primarily, it is an alternative to merge. "
 cecho "# Where a merge would usually create a new commit (a merge commit node)"
-cecho "# which recrifies the differences between two branches, a rebase would"
+cecho "# which rectifies the differences between two branches, a rebase would"
 cecho "# re-order (and recreate) one set of commits ON TOP of the other."
 cecho "# This may be confusing, but an example will make things more clear."
 
-cecho "# Importantly, this command can be dangerous when a developer accidently"
+cecho "# Importantly, this command can be dangerous when a developer accidentally"
 cecho "# (or otherwise) re-arranges public history.  Therefore, it must be used with care."
 
 pause
@@ -922,7 +923,7 @@ cecho "# For the above reasons, lets start with the safest version of rebase."
 cecho "# Recall that when we do a \"git pull\", there's actually an implicit"
 cecho "# merge that occurs between the remote branch and the local branch."
 cecho "# If we pass the \"--rebase\" flag to the \"pull\", then git"
-cecho "# will rebase our local changes to the branch ON TOP of the incomming changes."
+cecho "# will rebase our local changes to the branch ON TOP of the incoming changes."
 
 pause
 
@@ -932,8 +933,8 @@ cecho "# history. I've created a scenario where alice pushed a change, and bob i
 cecho "# to pull in that change. First lets \"fetch\" the changes:"
 
 #make changes to alice and bob's repos
-cd alice; sed -i -e "1i alice's change" file1.txt; git commit -am "alice's change to be merged" &> /dev/null; git push &> /dev/null; cd ..
-cd bob; echo "bob's change" >> file1.txt; git commit -am "bob's change to be merged" &> /dev/null; cd ..
+cd alice; sed -i -e "1i alice's change" file1.txt; git commit -am "\"alice's change to be merged\"" &> /dev/null; git push &> /dev/null; cd ..
+cd bob; echo "bob's change" >> file1.txt; git commit -am "\"bob's change to be merged\"" &> /dev/null; cd ..
 
 runCmd bob git fetch
 runCmd bob git log  --graph --oneline --decorate --all --color
@@ -953,13 +954,13 @@ runCmd bob git push
 cd alice; 
 git pull &> /dev/null;
 sed -i -e "1i alice's change" file1.txt; 
-git commit -am "alice's change to be rebased" &> /dev/null; 
+git commit -am "\"alice's change to be rebased\"" &> /dev/null; 
 git push &> /dev/null; 
 cd ..
 
 cd bob; 
 echo "bob's change" >> file1.txt; 
-git commit -am "bob's change to be rebased" &> /dev/null; 
+git commit -am "\"bob's change to be rebased\"" &> /dev/null; 
 cd ..
 
 cecho "# Here, I've set up the scenario again:"
@@ -973,13 +974,13 @@ runCmd bob git pull --rebase
 runCmd bob git log  --graph --oneline --decorate --all --color
 
 cecho "# Notice the difference between the merged and rebased changes."
-cecho "# The merged strategy shows the commits as happing in parallel,"
+cecho "# The merged strategy shows the commits as happening in parallel,"
 cecho "# while the rebased changes *look* like they happened sequentially."
 cecho "# Lesson: rebase tends to make commit history simpler."
 
 pause
 
-cecho "# Rebase is genarally safe in the Centralized Repository workflow that we are"
+cecho "# Rebase is generally safe in the Centralized Repository workflow that we are"
 cecho "# using here.  This is because we never rebase commits which are public. We"
 cecho "# ONLY rebase the changes in our local repository.  Use with care if moving"
 cecho "# to a more complicated workflow."
@@ -997,7 +998,7 @@ runCmd alice git checkout cool_feature
 
 cecho "# If alice tries to push now, nothing will happen"
 runCmd alice git push
-cecho "# This is because the branch isn\'t being tracked on the remote repo."
+cecho "# This is because the branch isn't being tracked on the remote repo."
 
 cecho "# Passing the -u flag will help:"
 runCmd alice git push -u origin cool_feature
@@ -1024,13 +1025,13 @@ cecho "# appropriate action."
 
 pause
 
-cecho "# Here, we demonstrate one extemely powerful tool for recovering from mistakes."
-cecho "# Consider the following situation, where alice commit's something important."
+cecho "# Here, we demonstrate one extremely powerful tool for recovering from mistakes."
+cecho "# Consider the following situation, where alice commits something important."
 
 echo "AN IMPORTANT CHANGE" >> alice/file2.txt
 
 showFiles alice
-runCmd alice git commit -am "An Important Change"
+runCmd alice git commit -am "\"An Important Change\""
 runCmd alice git log --graph --oneline --decorate --all --color
 
 cecho "# Alice hasn't pushed the commit yet, and she realizes she'd like to change it"
@@ -1062,15 +1063,33 @@ cecho "# Phew!!! All Better."
 
 pause
 
-cecho "# Phew!!! All Better."
+cecho "# Lets review some commands and lessons"
 
+cecho  "Git Commands:"
 
+defgit "git checkout <branch>   " "Switch to <branch> branch."
+defgit "git checkout <file>     " "Revert this file to last commit."
+defgit "git checkout <commit>   " "Switch to <commit>. You will be in detached-head state."
+defgit "git reset <file>        " "Unstages <file>"
+defgit "git reset <commit>      " "Moves current branch back to <commit>. Work-Dir not modified,
+                                                but stating area is modified."
+defgit "                --soft  " "Moves current branch back to <commit>. Work-Dir not modified. 
+                                                and Staging not modified."
+defgit "                --hard  " "Moves current branch back to <commit>. Work-Dir MODIFIED.
+                                                DO NOT RUN BEFORE COMITTING WORKING CHANGES"
+defgit "git pull                " "Bring local branches up-to-date with remote branches. *Uses Merge*"
+defgit "           --rebase     " "Bring local branches up-to-date with remote branches. *Uses Rebase*"
+defgit "git reflog              " "Show the reflog: the log of all recent changes to the repository.
+                                                 Run this to find recoverable files."
 
-
-
+pause
+cecho "Some important points"
 ipoint "Never re-write history on commits which someone else can see!
-        Do not rebase/amend/reset public commits!
-        Do not use reset --hard to revert public commits."
+        Do not rebase/amend/reset public commits! EVER!
+        Do not use reset --hard to revert public commits.  Use revert instead."
+ipoint "Using rebase generally makes for simpler history."
+ipoint "Use the reflog to help find missing commits.
+        This is your safety net!"
 
 
 
