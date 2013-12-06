@@ -171,7 +171,7 @@ fi
 if [ "$skip_through" -eq 1 ] ; then
   testSetup $skip_through 
 
-  if [ ! $istest ]; then
+  if ! $istest ; then
     cecho "Directions: in this test you will need to create:"
     cecho "... a central repository in $fname/repo.git"
     cecho "... a cloned repository in $fname/alice"
