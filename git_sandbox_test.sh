@@ -115,20 +115,22 @@ commit_n() {
 }
 
 testSetup() {
-  cecho "This is Test $1"
-  fname=test$1
-
-  if [ -d "$fname" ]; then
-    cecho "We first need to delete the test1 directory. Press enter to delete."
-    runCmd . rm -rf $fname
+  if !$istest; then
+    cecho "This is Test $1"
+    fname=test$1
+  
+    if [ -d "$fname" ]; then
+      cecho "We first need to delete the test1 directory. Press enter to delete."
+      runCmd . rm -rf $fname
+    fi
+    mkdir -p $fname
   fi
-  mkdir -p $fname
 }
 
 
 echo $ps_str
 
-if [ "$#" -ne 1 ] ; then
+if [ "$#" -eq 0 ] ; then
   cecho "Welcome to the git sandbox test."
   cecho "Novice Tests are from 1-3"
   cecho "Adept Test are from 4-6"
@@ -139,38 +141,64 @@ if [ "$#" -ne 1 ] ; then
 fi
 
 
+isnumber() { 
+  test "$1" && printf '%f' "$1" >/dev/null; 
+}
+
+istest=false
+skip_through=-1
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+    (-t) istest=true;;
+    (--test) istest=true;;
+    (--) shift; break;;
+    (-*) echo "$0: error - unrecognized option $1" 1>&2; exit 1;;
+    (*)
+      isnumber $1 && skip_through=$1
+      ;;
+    esac
+    shift
+done
+
+if $istest; then
+  echo "TESTING MODE"
+fi
+
+
+
 if [ "$skip_through" -eq 1 ] ; then
-  testSetup $skip_through 
-
-  cecho "Directions: in this test you will need to create:"
-  cecho "... a central repository in $fname/repo.git"
-  cecho "... a cloned repository in $fname/alice"
-  cecho "... a cloned repository in $fname/bob"
-
-  pause
-
-  cecho "To begin, press CTRL-Z to pause this script."
-  cecho "After you are done, type \"fg\" to continue"
-  cecho " You're back, press enter, and we will test your work"
-  pause
-
-  runFastCmd . touch $fname/alice/file1.txt
-  runFastCmd $fname/alice git add $fname/alice/file1.txt
-  runFastCmd $fname/alice git commit -am "\"Initial Commit\""
-  runFastCmd $fname/alice git push
-  runFastCmd $fname/bob git pull
-
-  cecho "If no errors appear above, then all is working great!"
+  if !istest; then
+    testSetup $skip_through 
+    cecho "Directions: in this test you will need to create:"
+    cecho "... a central repository in $fname/repo.git"
+    cecho "... a cloned repository in $fname/alice"
+    cecho "... a cloned repository in $fname/bob"
+  
+    pause
+  
+    cecho "When You're done, run $0 $skip_through --test."
+  else
+    runFastCmd $fname/alice git pull 
+    runFastCmd . touch $fname/alice/file1.txt
+    runFastCmd $fname/alice git add file1.txt
+    runFastCmd $fname/alice git commit -am "\"Initial Commit\""
+    runFastCmd $fname/alice git push origin master
+    runFastCmd $fname/bob git pull 
+    cecho "No errors should appear above!"
+  fi
+  exit
 fi
 
 
 
 if [ "$skip_through" -eq 2 ] ; then
   cecho "This is Test $skip_through"
-
+  exit
 fi
 
-
+echo "There is no Test $skip_through, sorry"
 
 
 
