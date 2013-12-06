@@ -117,7 +117,7 @@ commit_n() {
 testSetup() {
   fname=test$1
 
-  if !$istest; then
+  if [ ! $istest ]; then
     cecho "This is Test $1"  
     if [ -d "$fname" ]; then
       cecho "We first need to delete the test1 directory. Press enter to delete."
