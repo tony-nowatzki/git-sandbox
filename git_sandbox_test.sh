@@ -115,10 +115,10 @@ commit_n() {
 }
 
 testSetup() {
+  fname=test$1
+
   if !$istest; then
-    cecho "This is Test $1"
-    fname=test$1
-  
+    cecho "This is Test $1"  
     if [ -d "$fname" ]; then
       cecho "We first need to delete the test1 directory. Press enter to delete."
       runCmd . rm -rf $fname
@@ -169,8 +169,9 @@ fi
 
 
 if [ "$skip_through" -eq 1 ] ; then
+  testSetup $skip_through 
+
   if [ ! $istest ]; then
-    testSetup $skip_through 
     cecho "Directions: in this test you will need to create:"
     cecho "... a central repository in $fname/repo.git"
     cecho "... a cloned repository in $fname/alice"
