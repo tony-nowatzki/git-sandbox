@@ -58,6 +58,14 @@ runFastCmd() {
   cd - &> /dev/null
 }
 
+runSilent() {
+  dir=$1
+  cd $dir
+  shift
+  "$@" &> /dev/null
+  cd - &> /dev/null
+}
+
 
 runCmd() {
   dir=$1
@@ -117,7 +125,7 @@ commit_n() {
 testSetup() {
   fname=test$1
 
-  if [ ! $istest ]; then
+  if ! $istest ; then
     cecho "This is Test $1"  
     if [ -d "$fname" ]; then
       cecho "We first need to delete the test1 directory. Press enter to delete."
@@ -143,6 +151,21 @@ fi
 
 isnumber() { 
   test "$1" && printf '%f' "$1" >/dev/null; 
+}
+
+setupRepo() {
+  mkdir -p $1
+  pushd $1 &> /dev/null
+
+
+  mkdir -p repo.git
+  cd repo.git
+  git init --bare &> /dev/null
+  cd ..
+  git clone repo.git alice &> /dev/null
+  git clone repo.git bob &> /dev/null
+  
+  popd &> /dev/null
 }
 
 istest=false
@@ -171,35 +194,106 @@ fi
 if [ "$skip_through" -eq 1 ] ; then
   testSetup $skip_through 
 
+  cecho "Directions: in this test you will need to create:"
+  cecho "... a central repository in $fname/repo.git"
+  cecho "... a cloned repository in $fname/alice"
+  cecho "... a cloned repository in $fname/bob"
+  cecho "... one shared file called called file.txt (containing anything you want)"
+
   if ! $istest ; then
-    cecho "Directions: in this test you will need to create:"
-    cecho "... a central repository in $fname/repo.git"
-    cecho "... a cloned repository in $fname/alice"
-    cecho "... a cloned repository in $fname/bob"
-  
-    pause
-  
     cecho "When You're done, run $0 $skip_through --test."
   else
+    echo $ps_str
     runFastCmd $fname/alice git pull 
-    runFastCmd . touch $fname/alice/file1.txt
-    runFastCmd $fname/alice git add file1.txt
+    runFastCmd . touch $fname/alice/random-file.txt
+    runFastCmd $fname/alice git add random-file.txt
     runFastCmd $fname/alice git commit -am "\"Initial Commit\""
-    runFastCmd $fname/alice git push origin master
-    runFastCmd $fname/bob git pull 
+    runFastCmd $fname/alice git push #origin master
+    runFastCmd $fname/bob git pull
+    diff $fname/alice/file.txt $fname/bob/file.txt
     cecho "No errors should appear above!"
   fi
   exit
 fi
 
 
-
 if [ "$skip_through" -eq 2 ] ; then
-  cecho "This is Test $skip_through"
+  testSetup $skip_through 
+
+  cecho "Directions: in this test, a familiar repo structure has been created. Rules:"
+  cecho "1. Commit any uncomitted changes from all parties, and resolve any conflicts that occur."
+  cecho "2. Don't add/commit any .out files to the repo.  (a .gitignore may help)"
+
+  if ! $istest ; then
+    cecho "When You're done, run $0 $skip_through --test."
+    setupRepo $fname
+
+    touch $fname/alice/source1.txt
+    runSilent $fname/alice git add source1.txt
+    runSilent $fname/alice git commit -am "Initial Commit"
+    runSilent $fname/alice git push origin master
+    runSilent $fname/bob git pull
+
+
+    (cat <<STUFF
+1. This is the first line.
+2. The second line, this is.
+3. A fourth line, of course.
+4. To be sure, this is the fourth line.
+STUFF
+) > $fname/alice/source1.txt
+
+    (cat <<STUFF
+1. This is the first line.
+2. The second line, this is.
+2. The third line, of course.
+4. To be sure, this is the fourth line.
+STUFF
+) > $fname/bob/source1.txt
+
+
+    echo "Hello" > $fname/alice/source2.txt
+
+    cecho "# One moment please ... "
+    for i in {a..z}; do
+      for j in {a..f}; do
+        for k in {0..4}; do
+          cat /dev/urandom | head -1 > $fname/alice/${i}${i}${j}-${k}.out
+          cat /dev/urandom | head -1 > $fname/bob/${i}${i}${j}-${k}.out
+        done
+      done
+    done
+    
+    cecho "# Done, go ahead. : )"
+
+  else
+    echo $ps_str
+    (cat <<STUFF
+1. This is the first line.
+2. The second line, this is.
+3. The third line, of course.
+4. To be sure, this is the fourth line.
+STUFF
+) > $fname/.tmp1
+
+    diff $fname/.tmp1 $fname/bob/source1.txt
+    diff $fname/.tmp1 $fname/alice/source1.txt
+
+    echo "Hello" > $fname/.tmp2
+
+    diff $fname/.tmp2 $fname/bob/source2.txt
+    diff $fname/.tmp2 $fname/alice/source2.txt
+
+    echo "If nothing is printed above, you are successful!"
+  fi
   exit
 fi
 
+
 echo "There is no Test $skip_through, sorry"
+
+
+
 
 
 

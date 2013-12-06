@@ -666,7 +666,14 @@ cecho "# To synchronize the changes, we first \"pull\" to make sure everything"
 cecho "# is up to date, then we \"push\" our changes:"
 
 runCmd alice git pull
-runCmd alice git push
+runCmd alice git push origin master
+
+cecho "# The very first time you push, you'll need to put \"origin mater\""
+cecho "# after \"git push\".  (after that it will become default)"
+cecho "# Here, origin is the orignal repository we cloned from,"
+cecho "# and master is the branch we want to push."
+
+pause
 
 cecho "# Now bob can get the changes"
 runCmd bob git pull
