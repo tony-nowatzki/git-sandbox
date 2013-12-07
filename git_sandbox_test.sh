@@ -186,7 +186,7 @@ do
 done
 
 if $istest; then
-  echo "TESTING MODE"
+  echo "                   TESTING MODE                      "
 fi
 
 
@@ -288,6 +288,187 @@ STUFF
   fi
   exit
 fi
+
+if [ "$skip_through" -eq 3 ] ; then
+  testSetup $skip_through 
+
+  cecho "In this test, one of the repositories has a change in a local branch."
+  cecho "Directions: Put this change on the master branch, and make sure everyone"
+  cecho "has the change. (Hint: a merge may be required)"
+
+  if ! $istest ; then
+
+    setupRepo $fname
+
+    touch $fname/alice/source.txt
+    runSilent $fname/alice git add source.txt
+    runSilent $fname/alice git commit -am "Initial Commit"
+    runSilent $fname/alice git push origin master
+    runSilent $fname/bob git pull
+
+    (cat <<STUFF
+1. This is the first line.
+2. The second line, this is.
+3. The third line, of course.
+4. To be sure, this is the fourth line.
+STUFF
+) > $fname/alice/source.txt
+
+    runSilent $fname/alice git add source.txt
+    runSilent $fname/alice git commit -am "Commit 2"
+    runSilent $fname/alice git push
+
+    runSilent $fname/bob git pull
+    runSilent $fname/bob git branch local_branch
+    runSilent $fname/bob git checkout local_branch
+    echo -n "5. " >> $fname/bob/source.txt
+    runSilent $fname/bob git commit -am "added entry 5"
+    echo "And finally, the fifth line." >> $fname/bob/source.txt
+    runSilent $fname/bob git commit -am "completed entry 5"
+    runSilent $fname/bob git checkout master
+  else 
+
+    (cat <<STUFF
+1. This is the first line.
+2. The second line, this is.
+3. The third line, of course.
+4. To be sure, this is the fourth line.
+5. And finally, the fifth line.
+STUFF
+) > $fname/.tmp1
+    cecho $ps_str
+    diff $fname/.tmp1 $fname/alice/source.txt
+    cecho "If nothing appears above, then you have been successful!"
+  fi
+  exit
+fi
+
+if [ "$skip_through" -eq 4 ] ; then
+  testSetup $skip_through 
+
+  cecho "In this scenario, bob was coding late at night when he couldn't"
+  cecho "couldn't think properly."
+  cecho "Directions: "
+  cecho "1. Revert back to a commit with the source in a proper state."
+  cecho "2. Distribute these changes to all."
+
+  if ! $istest ; then
+
+    setupRepo $fname
+
+    touch $fname/alice/source.txt
+    runSilent $fname/alice git add source.txt
+    runSilent $fname/alice git commit -am "Initial Commit"
+    runSilent $fname/alice git push origin master
+    runSilent $fname/bob git pull
+
+    (cat <<STUFF
+1. This is the first line.
+2. The second line, this is.
+3. The third line, of course.
+4. To be sure, this is the fourth line.
+STUFF
+) > $fname/alice/source.txt
+
+    runSilent $fname/alice git add source.txt
+    runSilent $fname/alice git commit -am "Commit 2"
+    runSilent $fname/alice git push
+
+    runSilent $fname/bob git pull
+    echo -n "5. " >> $fname/bob/source.txt
+    runSilent $fname/bob git commit -am "added entry 5"
+    echo "The perfect fifth line." >> $fname/bob/source.txt
+    runSilent $fname/bob git commit -am "completed entry 5"
+    sed -i 'N;s/\(.*\)\n\(.*\)/\2\n\1/' $fname/bob/source.txt
+    runSilent $fname/bob git commit -am "wooo, it's getting late..."
+    sed -i 's/ is/ WAS/g' $fname/bob/source.txt
+    runSilent $fname/bob git commit -am "OMG, sed is so cool!"
+    sed -i '/\n/!G;s/\(.\)\(.*\n\)/&\2\1/;//D;s/.//' $fname/bob/source.txt 
+    runSilent $fname/bob git commit -am "asdfkasfkjsdhfkasjh"
+
+    runSilent $fname/bob git push
+    runSilent $fname/alice git pull
+ 
+  else 
+
+    (cat <<STUFF
+1. This is the first line.
+2. The second line, this is.
+3. The third line, of course.
+4. To be sure, this is the fourth line.
+5. The perfect fifth line.
+STUFF
+) > $fname/.tmp1
+    cecho $ps_str
+    git pull 
+    diff $fname/.tmp1 $fname/alice/source.txt
+    diff $fname/.tmp1 $fname/bob/source.txt
+    cecho "If nothing appears above, then you have been successful!"
+  fi
+  exit
+fi
+
+
+
+if [ "$skip_through" -eq 5 ] ; then
+  testSetup $skip_through 
+
+  cecho "In this scenario, Alice's source file is empty and she can't figure"
+  cecho "out why. She *swears* she comitted files, but can't see her changes"
+  cecho "in the log.  Help her get them back!"
+  cecho "Directions: "
+  cecho "1. Find alice's missing commits, and restore them.."
+  cecho "2. Distribute these changes to all."
+
+  if ! $istest ; then
+
+    setupRepo $fname
+
+    touch $fname/alice/source.txt
+    runSilent $fname/alice git add source.txt
+    runSilent $fname/alice git commit -am "Initial Commit"
+
+    (cat <<STUFF
+1. This is the First line.
+2. The Second line, this is.
+3. The Third line, of course.
+4. To be sure, this is the Fourth line.
+STUFF
+) > $fname/alice/source.txt
+
+    runSilent $fname/alice git commit -am "Commit 2"
+
+    runSilent $fname/alice git branch local_branch
+    echo -n "5. " >> $fname/alice/source.txt
+    runSilent $fname/alice git commit -am "added entry 5"
+    echo "The perfect Fifth line." >> $fname/alice/source.txt
+    runSilent $fname/alice git commit -am "completed entry 5"
+
+    runSilent $fname/alice git reset --hard HEAD~3
+
+  else
+    (cat <<STUFF
+1. This is the First line.
+2. The Second line, this is.
+3. The Third line, of course.
+4. To be sure, this is the Fourth line.
+5. The perfect Fifth line.
+STUFF
+) > $fname/.tmp1
+    runSilent $fname/alice git checkout -f master
+    runSilent $fname/bob git checkout -f master
+
+    cecho $ps_str
+    diff $fname/.tmp1 $fname/alice/source.txt
+    diff $fname/.tmp1 $fname/bob/source.txt
+    cecho "If nothing appears above, then you have been successful!"
+  
+  fi
+  exit
+fi
+
+
+
 
 
 echo "There is no Test $skip_through, sorry"
