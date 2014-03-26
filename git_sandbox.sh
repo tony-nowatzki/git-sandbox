@@ -3,6 +3,107 @@
 # Tony Nowatzki
 # 12/2/2013
 
+defgit() {
+#echo -en '\E[47;34m'"\033[1mE\033[0m" 
+  tput setaf 3
+  echo -ne "$1"
+  tput setaf 4
+  echo -e "$2"
+  tput sgr0
+}
+
+ps_str="$(tput setaf 1)--------------------------------------------------------------------------------$(tput sgr0)"
+cecho() {
+#echo -en '\E[47;34m'"\033[1mE\033[0m" 
+  tput setaf 4
+  echo -e "$@"
+  tput sgr0
+}
+
+
+showGitCommands() {
+case "$1" in 
+  1)
+defgit "git init <dir>          " "creates an empty repository"
+defgit "         --bare         " "makes a repo with no working directory"
+defgit "git add  <file>         " "Stages (and possibly begins tracking) <file>."
+defgit "git reset <file>        " "Un-stages <file>"
+defgit "git commit -m \"msg\"   " "Commits staged files to repo."
+defgit "git log --color         " "Shows the log of commits."
+defgit "        --graph --oneline --decorate --all --color  " "Show Commit tree."
+defgit "git status              " "Display the current status of all files."
+defgit "git diff --color        " "Shows current uncommitted changes"
+defgit "         --cached       " "Shows current staged changes"
+defgit "         <rev1> <rev2>  " "Shows differences between <rev1> and <rev2>"
+defgit "git branch <branch>    " "creates a new branch, <branch>, from the current one."
+defgit "                    -d  " "delete this branch"
+defgit "git checkout <branch>  " "Switch to <branch> branch."
+defgit "git merge <branch>     " "merge <branch> into current branch."
+defgit "git revert HEAD...<commit> --no-commit  " "reverts changes up to <commit>"
+  ;;
+  2)
+defgit "git init [dir]          " "creates an empty repository"
+defgit "         --bare         " "makes a repo with no working directory"
+defgit "git clone [orig_repo]   " "Creates new repository, with remote set to orig_repo"
+defgit "git pull                " "Bring local branches up-to-date with remote branches."
+defgit "git fetch               " "Bring in changes from the remote, but don't merge the local branch."
+defgit "git push                " "Push local commits up to remote repository."
+defgit "git stash               " "Removes dirty, tracked files and places them on a stack."
+defgit "          apply         " "Replays changes back onto current branch. (Does Not Drop!)"
+defgit "          list          " "Shows current stash stack."
+defgit "          drop          " "Drops final entry from stack."
+  ;;
+  3)  
+defgit "git checkout <branch>   " "Switch to <branch> branch."
+defgit "git checkout <file>     " "Revert this file to last commit."
+defgit "git checkout <commit>   " "Switch to <commit>. You will be in detached-head state."
+defgit "git reset <file>        " "Unstages <file>"
+defgit "git reset <commit>      " "Moves current branch back to <commit>. Work-Dir not modified,
+                                                but stating area is modified."
+defgit "                --soft  " "Moves current branch back to <commit>. Work-Dir not modified. 
+                                                and Staging not modified."
+defgit "                --hard  " "Moves current branch back to <commit>. Work-Dir MODIFIED.
+                                                DO NOT RUN BEFORE COMITTING WORKING CHANGES"
+defgit "git pull                " "Bring local branches up-to-date with remote branches. *Uses Merge*"
+defgit "           --rebase     " "Bring local branches up-to-date with remote branches. *Uses Rebase*"
+defgit "git reflog              " "Show the reflog: the log of all recent changes to the repository.
+                                                 Run this to find recoverable files."
+
+  ;;
+esac
+
+
+}
+
+
+printCommandsAndExit() {
+  echo $ps_str
+  cecho "Local Commands"
+  showGitCommands 1     
+  echo
+  
+  cecho "Commands for Sharing"
+  showGitCommands 2
+  echo
+
+  cecho "\"Advanced\" Commands"
+  showGitCommands 3     
+  echo
+  exit
+}
+
+# Should we show the commands and exit?
+for var in "$@"; do
+  case "$var" in 
+    *commands*) ;;&
+    *-c*)
+    printCommandsAndExit
+    ;;
+  esac
+done
+
+
+
 skip_through=-1
 
 if [ "$#" -eq 1 ]; then
@@ -16,7 +117,6 @@ fi
 
 
 
-ps_str="$(tput setaf 1)--------------------------------------------------------------------------------$(tput sgr0)"
 
 pause() {
   if [ "$skip_through" -le "$lesson_count" ]; then
@@ -26,12 +126,6 @@ pause() {
   fi
 }
 
-cecho() {
-#echo -en '\E[47;34m'"\033[1mE\033[0m" 
-  tput setaf 4
-  echo -e "$@"
-  tput sgr0
-}
 
 important_point=0
 ipoint() {
@@ -40,16 +134,6 @@ ipoint() {
   echo -e "$ipoint_count. $@"
   tput sgr0
 }
-
-defgit() {
-#echo -en '\E[47;34m'"\033[1mE\033[0m" 
-  tput setaf 3
-  echo -ne "$1"
-  tput setaf 4
-  echo -e "$2"
-  tput sgr0
-}
-
 
 
 runFastCmd() {
@@ -129,6 +213,7 @@ cecho "# It will not teach all of git's cool features, but by the end, you shoul
 cecho "# be able to be a \"competent\" git user for a simple workflow"
 cecho "# Inside is a bunch of different lessons, and you can skip to a particular "
 cecho "# Lesson by calling: $0 [Lesson Number]"
+cecho "# To see a summary of the commands, type: $0 --commands"
 cecho "# When paused, press [Enter] to continue."
 pause
 
@@ -531,23 +616,7 @@ cecho "Lets review some commands and important points:"
 
 cecho  ""
 cecho  "Git Commands:"
-defgit "git init <dir>          " "creates an empty repository"
-defgit "         --bare         " "makes a repo with no working directory"
-defgit "git add  <file>         " "Stages (and possibly begins tracking) <file>."
-defgit "git reset <file>        " "Un-stages <file>"
-defgit "git commit -m \"msg\"   " "Commits staged files to repo."
-defgit "git log --color         " "Shows the log of commits."
-defgit "        --graph --oneline --decorate --all --color  " "Show Commit tree."
-defgit "git status              " "Display the current status of all files."
-defgit "git diff --color        " "Shows current uncommitted changes"
-defgit "         --cached       " "Shows current staged changes"
-defgit "         <rev1> <rev2>  " "Shows differences between <rev1> and <rev2>"
-defgit "git branch <branch>    " "creates a new branch, <branch>, from the current one."
-defgit "                    -d  " "delete this branch"
-defgit "git checkout <branch>  " "Switch to <branch> branch."
-defgit "git merge <branch>     " "merge <branch> into current branch."
-defgit "git revert HEAD...<commit> --no-commit  " "reverts changes up to <commit>"
-
+showGitCommands 1
 pause
 
 cecho  ""
@@ -682,7 +751,7 @@ runCmd bob git log  --graph --oneline --decorate --all --color
 cecho "# TADA!  So it wasn't so hard to share after all."
 pause
 
-cecho "# One more potentially useful feature is to see what are the incoming"
+cecho "# Another useful feature is to see what are the incoming"
 cecho "# changes to the repository from others."
 cecho "# Git allows us to get other's changes without applying them with the"
 cecho "# working directory with the \"fetch\" command."
@@ -710,6 +779,75 @@ runCmd bob git diff HEAD origin/master
 cecho "# When ready, bob can commit his work, and pull in the new changes"
 
 runCmd bob git pull
+pause
+
+
+
+cecho "# One final useful feature, especially when sharing is the stack."
+cecho "# For instance, you might be in the middle of complex changes when"
+cecho "# when you need to do a pull.  For this, git provides the \"stash\""
+cecho "# It is typically used as a temporary space for uncomitted changes"
+
+cd alice;
+echo "Alice update file 2" >> file2.txt
+git commit -am "\"alice replaced file 2\"" &> /dev/null
+git push &> /dev/null
+cd ..
+
+cd bob;
+curfile2=`cat file2.txt`
+echo "Bobs update file 2" > file2.txt
+echo $curfile2 >> file2.txt
+cd ..
+
+cecho "# Right now, alice has comitted a file, and bob has changed that file."
+cecho "# Bob is going to pull:"
+
+runCmd bob git pull
+
+cecho "# Bob got a warning that incoming changes will ruin the commit, so instead"
+cecho "# he stashes them:"
+
+runCmd bob git stash
+
+cecho "# We can see what's on bob's stash like this:"
+runCmd bob git stash list
+
+cecho "# This list will grow each time something gets stashed, in FILO (stack-based) order."
+
+pause
+cecho "# Now lets get the changes from alice."
+runCmd bob git pull
+
+cecho "# That worked great.  Lets re-apply the changes we stashed:"
+runCmd bob git stash apply
+
+cecho "# Changes are now ready to commit."
+cecho "# Note that this did not actually remove things from the stash.  To do that,"
+cecho "# we should \"drop\" the stash entry.  Remembering to do this will keep the"
+cecho "# stash clean"
+
+runCmd bob git stash drop
+
+runCmd bob git stash list
+
+cecho "# Now the stash is clean again!  Not leaving things on the stack for too long is"
+cecho "# good practice, as it's easy to forget whats there."
+
+pause
+
+cd bob;
+git commit -am "\"finish lesson\"" &> /dev/null
+git pull &> /dev/null
+git push &> /dev/null
+cd ..
+
+cd alice;
+git commit -am "\"finish lesson\"" &> /dev/null
+git pull &> /dev/null
+git push &> /dev/null
+cd ..
+
 
 #cecho "# And new she makes a change."
 #echo "ALICE'S COOL NEW FEATURE!!!!" >> alice/file1.txt
@@ -722,12 +860,7 @@ cecho ""
 cecho "# Lets review the commands from the last lessons, and important points:"
 
 cecho ""
-defgit "git init [dir]          " "creates an empty repository"
-defgit "         --bare         " "makes a repo with no working directory"
-defgit "git clone [orig_repo]   " "Creates new repository, with remote set to orig_repo"
-defgit "git pull                " "Bring local branches up-to-date with remote branches."
-defgit "git fetch               " "Bring in changes from the remote, but don't merge the local branch."
-defgit "git push                " "Push local commits up to remote repository."
+showGitCommands 2
 
 pause
 cecho ""
@@ -1073,22 +1206,7 @@ pause
 cecho "# Lets review some commands and lessons"
 
 cecho  "Git Commands:"
-
-defgit "git checkout <branch>   " "Switch to <branch> branch."
-defgit "git checkout <file>     " "Revert this file to last commit."
-defgit "git checkout <commit>   " "Switch to <commit>. You will be in detached-head state."
-defgit "git reset <file>        " "Unstages <file>"
-defgit "git reset <commit>      " "Moves current branch back to <commit>. Work-Dir not modified,
-                                                but stating area is modified."
-defgit "                --soft  " "Moves current branch back to <commit>. Work-Dir not modified. 
-                                                and Staging not modified."
-defgit "                --hard  " "Moves current branch back to <commit>. Work-Dir MODIFIED.
-                                                DO NOT RUN BEFORE COMITTING WORKING CHANGES"
-defgit "git pull                " "Bring local branches up-to-date with remote branches. *Uses Merge*"
-defgit "           --rebase     " "Bring local branches up-to-date with remote branches. *Uses Rebase*"
-defgit "git reflog              " "Show the reflog: the log of all recent changes to the repository.
-                                                 Run this to find recoverable files."
-
+showGitCommands 3
 pause
 cecho "Some important points"
 ipoint "Never re-write history on commits which someone else can see!
