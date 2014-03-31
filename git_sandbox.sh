@@ -35,10 +35,11 @@ defgit "git status              " "Display the current status of all files."
 defgit "git diff --color        " "Shows current uncommitted changes"
 defgit "         --cached       " "Shows current staged changes"
 defgit "         <rev1> <rev2>  " "Shows differences between <rev1> and <rev2>"
-defgit "git branch <branch>    " "creates a new branch, <branch>, from the current one."
+defgit "git branch <branch>     " "creates a new branch, <branch>, from the current one."
 defgit "                    -d  " "delete this branch"
-defgit "git checkout <branch>  " "Switch to <branch> branch."
-defgit "git merge <branch>     " "merge <branch> into current branch."
+defgit "                    -a  " "shows all branches"
+defgit "git checkout <branch>   " "Switch to <branch> branch."
+defgit "git merge <branch>      " "merge <branch> into current branch."
 defgit "git revert HEAD...<commit> --no-commit  " "reverts changes up to <commit>"
   ;;
   2)
@@ -48,6 +49,7 @@ defgit "git clone [orig_repo]   " "Creates new repository, with remote set to or
 defgit "git pull                " "Bring local branches up-to-date with remote branches."
 defgit "git fetch               " "Bring in changes from the remote, but don't merge the local branch."
 defgit "git push                " "Push local commits up to remote repository."
+defgit "         origin master  " "Pushes master branch to the origin remote repo.  Run this on first push."
 defgit "git stash               " "Removes dirty, tracked files and places them on a stack."
 defgit "          apply         " "Replays changes back onto current branch. (Does Not Drop!)"
 defgit "          list          " "Shows current stash stack."
@@ -64,6 +66,7 @@ defgit "                --soft  " "Moves current branch back to <commit>. Work-D
                                                 and Staging not modified."
 defgit "                --hard  " "Moves current branch back to <commit>. Work-Dir MODIFIED.
                                                 DO NOT RUN BEFORE COMITTING WORKING CHANGES"
+defgit "got push -u origin <br> " "Begins tracking of local branch <br> on origin repo."                                        
 defgit "git pull                " "Bring local branches up-to-date with remote branches. *Uses Merge*"
 defgit "           --rebase     " "Bring local branches up-to-date with remote branches. *Uses Rebase*"
 defgit "git reflog              " "Show the reflog: the log of all recent changes to the repository.
@@ -1144,6 +1147,9 @@ cecho "# Passing the -u flag will help:"
 runCmd alice git push -u origin cool_feature
 cecho "# Here \"origin\" is the location of the repo, which was setup automatically"
 cecho "# when we did the original clone.  There are easy ways to modify this if necessary."
+cecho "# The -u flag specifically makes this remote default, so push and pull don't need to."
+cecho "# specify \"origin <branch>\" anymore."
+
 
 cecho "# To get this branch, bob just has to pull, and checkout"
 runCmd bob git pull
