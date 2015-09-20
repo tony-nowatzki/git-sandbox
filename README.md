@@ -18,4 +18,6 @@ interested in.
 
 learn-git.sh  --  The tutorial contains all directions.
 
+learn-git.sh -c  -- Show git command summary (in color!)
+
 learn-git-test.sh  --  A few basic comprehension tests.
