@@ -1,4 +1,4 @@
-# git-tutorial
+# git-sandbox
 Learn Git and explore!
 
 There are many great ways to learn Git out there 
